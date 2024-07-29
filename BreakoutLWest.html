@@ -16,7 +16,7 @@
     </style>
   </head>
   <body>
-    <canvas id="myCanvas" width="480" height="320"></canvas>
+    <canvas id="myCanvas" width="1300" height="800"></canvas>
 
     <script>
       let canvas = document.getElementById("myCanvas");
@@ -31,22 +31,39 @@
       let paddleX = (canvas.width - paddleWidth) / 2;
       let rightPressed = false;
       let leftPressed = false;
-      let brickRowCount = 5;
-      let brickColumnCount = 3;
+      let brickRowCount = 15;
+      let brickColumnCount = 10;
       let brickWidth = 75;
       let brickHeight = 20;
       let brickPadding = 10;
       let brickOffsetTop = 30;
-      let brickOffsetLeft = 30;
+      let brickOffsetLeft = 20;
       let score = 0;
       let lives = 3;
+      let level = 1;
 
       let bricks = [];
       for (let c = 0; c < brickColumnCount; c++) {
         bricks[c] = [];
         for (let r = 0; r < brickRowCount; r++) {
-          bricks[c][r] = { x: 0, y: 0, status: 2 };
+          bricks[c][r] = { x: 0, y: 0, status: level };
         }
+      }
+      let colors = [
+        "#ff0000",
+        "#faff00",
+        "#ff8200",
+        "#008000",
+        "#0000FF",
+        "#4b0082",
+        "#ee82ee",
+      ];
+      function randomColorPicker() {
+        //The first seven colors follow ROYGBIV as requested by Randy but future levels will add a new color code to colors.
+        //returns a random hexcode string for every new level that does not yet have one.
+        /*
+        if()
+        */
       }
 
       document.addEventListener("keydown", keyDownHandler, false);
@@ -74,40 +91,31 @@
         }
       }
       function collisionDetection() {
+        //Add x-axis collisionDetection
         for (let c = 0; c < brickColumnCount; c++) {
           for (let r = 0; r < brickRowCount; r++) {
             let b = bricks[c][r];
-            if (b.status == 2) {
-              if (
-                x > b.x &&
-                x < b.x + brickWidth &&
-                y > b.y &&
-                y < b.y + brickHeight
-              ) {
-                dy = -dy;
-                b.status = 1;
-                score++;
-              }
-            } else if (b.status == 1) {
-              if (
-                x > b.x &&
-                x < b.x + brickWidth &&
-                y > b.y &&
-                y < b.y + brickHeight
-              ) {
-                dy = -dy;
-                b.status = 0;
-                score++;
-                if (score == brickRowCount * brickColumnCount * 2) {
-                  alert("YOU WIN, CONGRATS!");
-                  document.location.reload();
-                }
-              }
+
+            if (
+              x > b.x &&
+              x < b.x + brickWidth &&
+              y > b.y &&
+              y < b.y + brickHeight
+            )
+              brick.status--;
+            if (brick.status > 0) {
+              points++;
+            }
+            if (bricks.status > 0) {
+              brick.draw();
+            }
+            if (score == brickRowCount * brickColumnCount * level) {
+              document.location.reload();
+              level++;
             }
           }
         }
       }
-
       function drawBall() {
         ctx.beginPath();
         ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
@@ -128,6 +136,7 @@
         ctx.closePath();
       }
       function drawBricks() {
+        //I need the draw bricks function to work with the new status handling method and the new color changing method.
         for (let c = 0; c < brickColumnCount; c++) {
           for (let r = 0; r < brickRowCount; r++) {
             if (bricks[c][r].status == 2) {
@@ -187,6 +196,7 @@
             if (!lives) {
               alert("GAME OVER");
               document.location.reload();
+              level = 1;
             } else {
               x = canvas.width / 2;
               y = canvas.height - 30;
